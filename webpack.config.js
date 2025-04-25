@@ -1,6 +1,7 @@
 // webpack.config.js
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { ModuleFederationPlugin } = require("webpack").container;
 
 module.exports = {
   entry: "./src/index.js",
@@ -35,6 +36,17 @@ module.exports = {
     ],
   },
   plugins: [
+    new ModuleFederationPlugin({
+      name: "reactDashboard",
+      filename: "remoteEntry.js",
+      exposes: {
+        "./Dashboard": "./src/components/Dashboard",
+      },
+      shared: {
+        react: { singleton: true },
+        "react-dom": { singleton: true },
+      },
+    }),
     // HtmlWebpackPlugin for development/testing
     new HtmlWebpackPlugin({
       template: "./public/index.html",
