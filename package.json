@@ -37,7 +37,8 @@
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
     "serve": "serve -s dist -p 3000 --cors",
-    "deploy": "npm run build && npm run serve"
+    "deploy": "npm run build && npm run serve",
+    "vercel-build": "webpack --mode production"
   },
   "browserslist": {
     "production": [
