@@ -1,12 +1,25 @@
 // src/index.js
-import React from "react";
-import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
+// Function to check if React and ReactDOM are available
+const checkDependencies = () => {
+  if (!window.React || !window.ReactDOM) {
+    console.error(
+      "React and/or ReactDOM not found in global scope. Make sure they are loaded before the dashboard bundle."
+    );
+    return false;
+  }
+  return true;
+};
+
 // Function to mount the React app to a specified element
-// Also accepts optional props for customization
 const mountDashboard = (elementId, props = {}) => {
+  // Check for dependencies
+  if (!checkDependencies()) {
+    return null;
+  }
+
   const containerElement = document.getElementById(elementId);
 
   if (!containerElement) {
@@ -14,29 +27,45 @@ const mountDashboard = (elementId, props = {}) => {
     return null;
   }
 
-  // Create root and render
-  const root = ReactDOM.createRoot(containerElement);
-  root.render(
-    <React.StrictMode>
-      <App {...props} />
-    </React.StrictMode>
-  );
+  try {
+    // Use React from window for creating the root
+    const root = window.ReactDOM.createRoot(containerElement);
 
-  // Return unmount function
-  return () => {
-    root.unmount();
-  };
+    root.render(
+      window.React.createElement(
+        window.React.StrictMode,
+        null,
+        window.React.createElement(App, props)
+      )
+    );
+
+    // Return unmount function
+    return () => {
+      try {
+        root.unmount();
+      } catch (error) {
+        console.error("Error unmounting React component:", error);
+      }
+    };
+  } catch (error) {
+    console.error("Error mounting React dashboard:", error);
+    return null;
+  }
 };
 
-// For standalone development and testing
-if (process.env.NODE_ENV === "development") {
+// For standalone development
+if (typeof document !== "undefined") {
+  // Check if we're in the browser
   const rootElement = document.getElementById("root");
-  if (rootElement) {
-    const root = ReactDOM.createRoot(rootElement);
+  if (rootElement && checkDependencies()) {
+    // Use window.React and window.ReactDOM for consistency
+    const root = window.ReactDOM.createRoot(rootElement);
     root.render(
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
+      window.React.createElement(
+        window.React.StrictMode,
+        null,
+        window.React.createElement(App, {})
+      )
     );
   }
 }
@@ -44,5 +73,5 @@ if (process.env.NODE_ENV === "development") {
 // Export the mount function as default
 export default mountDashboard;
 
-// Also export App component for direct use if needed
+// Also export App component
 export { App };

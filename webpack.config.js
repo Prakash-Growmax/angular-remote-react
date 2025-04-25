@@ -13,6 +13,8 @@ module.exports = {
       type: "umd",
       export: "default",
     },
+    // This helps with UMD compatibility
+    globalObject: "this",
   },
   module: {
     rules: [
@@ -33,10 +35,15 @@ module.exports = {
     ],
   },
   plugins: [
-    // HtmlWebpackPlugin is only needed for development/testing
+    // HtmlWebpackPlugin for development/testing
     new HtmlWebpackPlugin({
       template: "./public/index.html",
       inject: true,
+      // Add React and ReactDOM scripts for development
+      scripts: [
+        "https://unpkg.com/react@18/umd/react.development.js",
+        "https://unpkg.com/react-dom@18/umd/react-dom.development.js",
+      ],
     }),
   ],
   resolve: {
@@ -50,18 +57,18 @@ module.exports = {
       "Access-Control-Allow-Origin": "*",
     },
   },
-  // Externalize React and ReactDOM to avoid bundling them
+  // Modified externals configuration for better compatibility
   externals: {
     react: {
       commonjs: "react",
       commonjs2: "react",
-      amd: "React",
+      amd: "react",
       root: "React",
     },
     "react-dom": {
       commonjs: "react-dom",
       commonjs2: "react-dom",
-      amd: "ReactDOM",
+      amd: "react-dom",
       root: "ReactDOM",
     },
   },
