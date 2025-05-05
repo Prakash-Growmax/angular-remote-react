@@ -32,6 +32,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import useUserData from "../hooks/useLoggedInDetails";
 
 // Fake API service using JSONPlaceholder for demo
 const apiService = {
@@ -123,6 +124,9 @@ const apiService = {
 };
 
 const Dashboard = () => {
+  const userData = useUserData();
+  console.log("🚀 ~ Dashboard ~ userData:", userData);
+
   const [salesData, setSalesData] = useState([]);
   const [trafficData, setTrafficData] = useState([]);
   const [pieData, setPieData] = useState([]);
@@ -235,7 +239,8 @@ const Dashboard = () => {
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Dashboard Overview
+        Dashboard Overview{" "}
+        {userData?.user_category ? `of ${userData?.user_category}` : ""}
       </Typography>
 
       {/* Chart Visibility Controls and API Demo */}
